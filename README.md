@@ -55,7 +55,7 @@ explorar (y demostrar) el funcionamiento de OpenVas/Greenbone.
 
 Para poder usar los comandos de docker tal cual como están se deben seguir los
 [siguientes pasos](https://docs.docker.com/engine/install/linux-postinstall/)
-para no tener que usar `sudo`.
+para no tener que usar `sudo` en linux.
 
 Esto es opcional, en caso de no querer hacerlo se debe anteponer `sudo` antes de los comandos de docker.
 
@@ -70,7 +70,7 @@ Para crear la red:
 `docker network create tpe-redes --attachable --subnet 10.0.0.0/24`
 
 En caso de que esa subred se encuentre en uso se deberá cambiar el `10.0.0.0/24`
-por ora que sí esté disponible.
+por otra que sí esté disponible.
 
 ### Configuración de contenedores vulnerables
 
@@ -131,11 +131,11 @@ docker run \
 OpenVas es un escáner y se utiliza como parte del sistema de manejo de
 vulnerabilidades de Greenbone. Se utiliza una [ imagen de docker](https://immauss.github.io/openvas/)
 pre configurada que ya cuenta con todo el sistema de manejo
-de vulnerabilidades de greenbone utilizando openVas.
-
-Primero hay que crear un volumen de docker para tener datos persistentes
+de vulnerabilidades de Greenbone utilizando OpenVas.
 
 #### Crear un volumen de docker
+
+Primero hay que crear un volumen de docker para persistir los datos si se cierra el contenedor.
 
 ```sh
 docker volume create tpe-redes-openvas
@@ -160,7 +160,7 @@ docker run \
 
 El `--publish 8080:9392` es para poder acceder al puerto 9392 del contenedor a
 través del puerto `8080` del host. De esta manera se puede acceder a la
-interfaz web del Greenbone Security Asistant accediendo a [localhost:8080](localhost:8080)
+interfaz web del Greenbone Security Assistant accediendo a http://localhost:8080 
 desde el navegador de la maquina host.
 
 _Nota: Este acceso es por http, por lo cual no es muy seguro ya que las
