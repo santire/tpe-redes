@@ -16,6 +16,7 @@
       - [Crear un volumen de docker](#crear-un-volumen-de-docker)
       - [Crear el contenedor](#crear-el-contenedor)
       - [Validar configuración de red](#validar-configuración-de-red)
+  - [Repositorio de Github](#repositorio-de-github)
 
 ## Requisitos
 
@@ -248,3 +249,9 @@ Nmap done: 256 IP addresses (4 hosts up) scanned in 15.02 seconds
 De este resultado se puede ignorar la fecha, tiempos de latencia y direcciones
 MAC, pero es importante que para los hosts creados previamente les corresponda
 su IP y hostname.
+
+# Repositorio de Github
+
+En el repositorio se encuentran todos los documentos junto con el Dockerfile
+
+[Link al repositorio](https://github.com/santire/tpe-redes)
