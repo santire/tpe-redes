@@ -1,12 +1,5 @@
 # Redes de Información - Trabajo Práctico
 
-<br />
-<p align="center">
-  <a href="https://github.com/santire/tpe-redes/">
-    <img src="assets/logo.png" alt="Logo" width="234" height="115">
-  </a>
-</p>
-
 <h3 align="center">Tema 4 - OpenVas/Greenbone</h3>
 
 ## Tabla de Contenidos
@@ -21,13 +14,13 @@
       - [Contenedor casero](#contenedor-casero)
     - [Configuración de contenedor OpenVas/Greenbone](#configuración-de-contenedor-openvas%2Fgreenbone)
       - [Crear un volumen de docker](#crear-un-volumen-de-docker)
-      - [Crear el contenedor](#crear-el-conteneder)
+      - [Crear el contenedor](#crear-el-contenedor)
       - [Validar configuración de red](#validar-configuración-de-red)
-      - [Cambiar usuario y contraseña default](#cambiar-usuario-y-contraseña-default)
 
 ## Requisitos
 
 - [Docker](https://docs.docker.com/get-docker/)
+- [Dockerfile de la máquina vulnerable](https://gist.githubusercontent.com/santire/80d206de725b0861bc5cb38b2cc87583/raw/9bc8bc2cb1f03039fa7ca32dd7b39b02f1bf71d4/Dockerfile)
 
 ## Instalación
 
@@ -59,13 +52,14 @@ Se recomienda una terminal distinta para cada contenedor.
 [ Metasploitable](https://docs.rapid7.com/metasploit/metasploitable-2-exploitability-guide/)
 es una máquina virtual de Ubuntu diseñada para ser _bastante_ vulnerable, se
 utiliza para probar distintas herramientas de seguridad. Se utilizará la siguiente
-[ versión dockerizada ](https://hub.docker.com/r/tleemcjr/metasploitable2).
+[versión dockerizada](https://hub.docker.com/r/tleemcjr/metasploitable2).
 
 Para crear el contenedor y asignarlo a la red creada previamente ejecutar el siguiente comando:
 
 ```sh
 docker run \
     -it \
+    --rm \
     --network tpe-redes \
     --ip="10.0.0.2" \
     --name metasploitable \
@@ -76,7 +70,7 @@ docker run \
 
 Esto levanta el contenedor en la red creada previamente y le asigna una ip
 estática. Luego levanta todos los servicios vulnerables y queda en la terminal
-del contenedor.
+del contenedor. 
 
 #### Contenedor casero
 
@@ -85,23 +79,44 @@ con servicio ssh en el puerto 2222 al cual se lo puede acceder con el
 usuario/contraseña `admin:admin`.
 
 Primero hay que crear la imagen, para ello hay que correr el siguiente comando
-desde el directorio raíz del proyecto (donde se encuentra el Dockerfile):
+desde el directorio raíz del proyecto donde se encuentra el
+[Dockerfile](https://gist.githubusercontent.com/santire/80d206de725b0861bc5cb38b2cc87583/raw/9bc8bc2cb1f03039fa7ca32dd7b39b02f1bf71d4/Dockerfile).
+
+Si no cuenta con el Dockerfile se lo puede obtener de la siguiente manera (en Linux):
+```sh
+# Crear y moverse al directorio del proyecto
+mkdir tpe-redes
+cd tpe-redes
+# Descargar el archivo Dockerfile al directorio actual
+wget https://gist.githubusercontent.com/santire/80d206de725b0861bc5cb38b2cc87583/raw/9bc8bc2cb1f03039fa7ca32dd7b39b02f1bf71d4/Dockerfile
+```
+
+Y luego:
 
 ```sh
 docker build -t vulnerable-casero .
 ```
 
-Luego se crea el contenedor y se lo asigna a la red:
+Para crear el contenedor y asignarlo a la red:
 
 ```sh
 docker run \
     -it \
+    --rm \
+    -d \
     --network tpe-redes \
     --ip="10.0.0.3" \
     --name vulnerable \
     --hostname vulnerable-casero \
-    vulnerable-casero \
-    bash
+    vulnerable-casero
+```
+
+Esto levanta el contenedor en el fondo.
+
+Para entrar al contenedor hay que correr:
+
+```sh
+docker exec -it vulnerable bash
 ```
 
 ### Configuración de contenedor OpenVas/Greenbone
@@ -143,22 +158,27 @@ desde el navegador de la maquina host.
 
 _Nota: Este acceso es por http, por lo cual no es muy seguro ya que las
 credenciales se encuentran visibles para cualquiera que intercepte el paquete.
-Se puede acceder utilizando https, pero para eso hay que tener configurarlo con
+Se puede acceder utilizando https, pero para eso hay que tenerlo configurado con
 certificados. Para la demo se utiliza http ya que es una demo en un ambiente
 de prueba. La funcionalidad es la misma._
+
+**La primera vez que se levanta el contenedor no se podrá acceder a la interfaz
+hasta que se terminen de crear y actualizar las bases de vulnerabilidades, esto
+puede tardar bastante tiempo (~30min).**
 
 El contenedor se genera con el usuario administrador `admin` con contraseña
 `admin` por defecto.
 
 Por defecto el contenedor sincroniza las bases de vulnerabilidades cada vez que se
-reinicia. Este proceso puede tardar bastante tiempo dependiendo de la banda
-ancha disponible. 
+reinicia. 
 
 Para ver el estado de esta sincronización se puede correr lo siguiente:
 
 ```sh
 docker logs -f openvas
 ```
+
+
 
 #### Validar configuración de red
 
